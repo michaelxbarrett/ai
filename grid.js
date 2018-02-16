@@ -19,19 +19,19 @@ function gridData() {
 				height: height,
 				click: click
 			})
-			// increment the x position. I.e. move it over by 50 (width variable)
+			// increment the x position
 			xpos += width;
 		}
 		// reset the x position after a row is complete
 		xpos = 1;
-		// increment the y position for the next row. Move it down 50 (height variable)
+		// increment the y position for the next row
 		ypos += height;	
 	}
 	return data;
 }
 
 var gridData = gridData();	
-// I like to log the data to the console for quick debugging
+// log the data to the console for quick debugging
 console.log(gridData);
 
 var grid = d3.select("#grid")
