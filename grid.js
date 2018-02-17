@@ -17,7 +17,9 @@ function gridData() {
 				y: ypos,
 				width: width,
 				height: height,
-				click: click
+				click: click,
+				row: row,
+				column: column
 			})
 			// increment the x position
 			xpos += width;
@@ -50,6 +52,7 @@ var column = row.selectAll(".square")
 	.attr("class","square")
 	.attr("x", function(d) { return d.x; })
 	.attr("y", function(d) { return d.y; })
+	.attr("id", function(d) { return ("" + d.row + "," + d.column); })
 	.attr("width", function(d) { return d.width; })
 	.attr("height", function(d) { return d.height; })
 	.style("fill", "#fff")
@@ -57,7 +60,7 @@ var column = row.selectAll(".square")
 	.on('click', function(d) {
        d.click ++;
        if ((d.click)%4 == 0 ) { d3.select(this).style("fill","#fff"); }
-	   if ((d.click)%4 == 1 ) { d3.select(this).style("fill","#2C93E8"); }
-	   if ((d.click)%4 == 2 ) { d3.select(this).style("fill","#F56C4E"); }
-	   if ((d.click)%4 == 3 ) { d3.select(this).style("fill","#838690"); }
+	   if ((d.click)%4 == 1 ) { d3.select(this).style("fill","#000000"); }
+	   if ((d.click)%4 == 2 ) { d3.select(this).style("fill","#00FF00"); }
+	   if ((d.click)%4 == 3 ) { d3.select(this).style("fill","#FF0000"); }
     });
