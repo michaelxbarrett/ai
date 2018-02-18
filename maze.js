@@ -273,6 +273,8 @@ class Maze {
 		}
 	}
 
+
+
 	run(){
 		var originx = this.agent.x;
 		var originy = this.agent.y;
@@ -288,7 +290,7 @@ class Maze {
 			this.openList.insert(this.start);
 			this.computePath();
 			if (this.openList.size < 1){
-				alert("Can't reach target!");
+				//alert("Can't reach target!");
 				return;
 			}
 			var ptr = this.target;
@@ -315,6 +317,7 @@ class Maze {
 					}
 					console.log("Agent moved to (x: " + this.agent.x + ", y: " + this.agent.y + ") <br>");
 					this.displayCellAsVisited(this.agent.y, this.agent.x);
+					return;
 				}
 			}
 			stack.length = 0;
@@ -325,7 +328,7 @@ class Maze {
 		var ptr = this.target;
 		stack.length = 0;
 
-		alert("I reached the target!");
+		//alert("I reached the target!");
 		return;
 	}
 
@@ -337,6 +340,15 @@ window.onload = function(){
 	document.write("Target is at (x: " + maze.target.x + ", y: " + maze.target.y + ") <br>");
 	document.write("This is a Manhattan distance of " + (Math.abs(maze.agent.x - maze.target.x) + Math.abs(maze.agent.y - maze.target.y)));
 	*/
-	maze.run();
+	function main() {
+		setTimeout(function(){
+			maze.run();
+			if (maze.start.x != maze.target.x || maze.start.y != maze.target.y){
+				main();
+			}
+			
+	}, 50)
+	}
+	main();
 
 }
