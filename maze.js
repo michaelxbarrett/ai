@@ -165,13 +165,14 @@ class Maze {
 	reset(){
 		row.selectAll('.square').style('fill', '#666')
 		d3.selectAll(".square").style("stroke", "#000")
-		maze.load(file);
+		this.load(file);
 	}
 	constructor(){
 		this.openList = new PriorityQueue();
 		this.closedList = new PriorityQueue();
 		this.counter = 0;
 		this.numberOfCellsExpanded = 0;
+		this.data = "";
 	}
 
 	generateMaze(){
@@ -399,40 +400,39 @@ class Maze {
 	}
 
 	load(blob){
-		//this.data = "";
+		this.data = "";
 		var maze = this;
 		var reader = new FileReader();
 		reader.onload = function(e) {
 		    maze.configure(e.target.result);
+		    maze.runTest();
 		};
 		reader.readAsText(blob);
 		
 	}
 
+	runTest(){
+		console.log(this.runAdaptive());
+	}
+
 	displayCellAsBlocked(i,j){
-		var target = document.getElementById("" + i + "," + j);
-		target.style.fill = "#000000"
+		//var target = document.getElementById("" + i + "," + j);		target.style.fill = "#000000"
 	}
 
 	displayCellAsAgent(i,j){
-		var target = document.getElementById("" + i + "," + j);
-		target.style.fill = "#ff0000"
+		//var target = document.getElementById("" + i + "," + j);		target.style.fill = "#ff0000"
 	}
 	displayCellAsTarget(i,j){
-		var target = document.getElementById("" + i + "," + j);
-		target.style.fill = "#fff"
+		//var target = document.getElementById("" + i + "," + j);		target.style.fill = "#fff"
 	}
 	displayCellAsComputed(i,j){
-		var target = document.getElementById("" + i + "," + j);
-		target.style.stroke = "#ffff00"
+		//var target = document.getElementById("" + i + "," + j);		target.style.stroke = "#ffff00"
 	}
 	displayCellAsVisited(i,j){
-		var target = document.getElementById("" + i + "," + j);
-		target.style.fill = "#98ee98"
+		//var target = document.getElementById("" + i + "," + j);		target.style.fill = "#98ee98"
 	}
 	displayCellAsOpen(i,j){
-		var target = document.getElementById("" + i + "," + j);
-		target.style.stroke = "#ffff00"
+		//var target = document.getElementById("" + i + "," + j);		target.style.stroke = "#ffff00"
 	}
 
 
@@ -590,7 +590,7 @@ class Maze {
 					//console.log("Agent moved to (x: " + this.agent.x + ", y: " + this.agent.y + ") <br>");
 					this.displayCellAsVisited(this.agent.y, this.agent.x);
 					//console.log(this.agent.g)
-					return;
+					//return;
 				}
 			}
 
@@ -604,7 +604,8 @@ class Maze {
 		}
 		var ptr = this.target;
 		stack.length = 0;
-		console.log("I reached the target!");
+		//console.log("I reached the target!");
+		//console.log(this.numberOfCellsExpanded / this.counter)
 		var i = 0;
 		return (this.numberOfCellsExpanded / this.counter);
 	}
@@ -660,7 +661,7 @@ class Maze {
 					//console.log("Agent moved to (x: " + this.agent.x + ", y: " + this.agent.y + ") <br>");
 					this.displayCellAsVisited(this.agent.y, this.agent.x);
 					//console.log(this.agent.g)
-					return;
+					//return;
 				}
 			}
 			stack.length = 0;
@@ -668,7 +669,8 @@ class Maze {
 		}
 		var ptr = this.target;
 		stack.length = 0;
-		console.log("I reached the target!");
+		//console.log("I reached the target!");
+		//console.log(this.numberOfCellsExpanded / this.counter)
 		var i = 0;
 		return (this.numberOfCellsExpanded / this.counter);
 	}
@@ -678,7 +680,7 @@ class Maze {
 		//var originx = this.agent.x;
 		//var originy = this.agent.y;
 		var stack = [];
-		console.log(this.agent);
+		//console.log(this.agent);
 		this.agent.f = this.agent.h;
 		while (this.start.x != this.target.x || this.start.y != this.target.y){
 			while (stack.pop()){};
@@ -721,7 +723,7 @@ class Maze {
 					//console.log("Agent moved to (x: " + this.agent.x + ", y: " + this.agent.y + ") <br>");
 					this.displayCellAsVisited(this.agent.y, this.agent.x);
 					//console.log(this.agent.g)
-					return;
+					//return;
 				}
 			}
 			stack.length = 0;
@@ -729,15 +731,27 @@ class Maze {
 		}
 		var ptr = this.target;
 		stack.length = 0;
-		console.log("I reached the target!");
+		//console.log("I reached the target!");
+		//console.log(this.numberOfCellsExpanded / this.counter)
 		var i = 0;
-		return true;
+		return (this.numberOfCellsExpanded / this.counter);
 	}
 
 }
 
 var maze;
 var file;
+var avg;
+
+function runTest(e){
+	row.selectAll('.square').style('fill', '#666')
+	var mazes = [];
+	for (var i = 0; i < 50; i++){
+		file = e.target.files[i]; 
+		mazes.push(new Maze());
+		mazes[i].load(file);
+	}
+}
 
 function choseFile(e){
 	row.selectAll('.square').style('fill', '#666')
@@ -780,13 +794,13 @@ window.onload = function(){
 	//var originy = maze.agent.y;
 	//var originx = maze.agent.x;
 
-	document.querySelector("#fileInput").addEventListener('change',choseFile, false);
-
-
+	//document.querySelector("#fileInput").addEventListener('change',choseFile, false);
+	document.querySelector("#fileInput").addEventListener('change',runTest, false);
 	/*
+	
 	var i = 0;
 	while (i < 50){
-		if (maze.runForward()){
+		if (maze.runForward() == true){
 			var blob = new Blob([maze.data], {type: "text/plain;charset=utf-8"});
 			saveAs(blob, "maze"+ (i + 1)+ ".txt");
 			i++;
@@ -795,6 +809,7 @@ window.onload = function(){
 		maze = new Maze();
 		maze.generateMaze();
 	}
+	
 	*/
 
 	
