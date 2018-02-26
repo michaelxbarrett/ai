@@ -405,34 +405,36 @@ class Maze {
 		var reader = new FileReader();
 		reader.onload = function(e) {
 		    maze.configure(e.target.result);
-		    maze.runTest();
+		    //maze.runTest(blob);
 		};
 		reader.readAsText(blob);
 		
 	}
 
-	runTest(){
-		console.log(this.runAdaptive());
+	runTest(blob){
+		console.log(blob.name + ":");
+		console.log(this.runBackward());
+
 	}
 
 	displayCellAsBlocked(i,j){
-		//var target = document.getElementById("" + i + "," + j);		target.style.fill = "#000000"
+		var target = document.getElementById("" + i + "," + j);		target.style.fill = "#000000"
 	}
 
 	displayCellAsAgent(i,j){
-		//var target = document.getElementById("" + i + "," + j);		target.style.fill = "#ff0000"
+		var target = document.getElementById("" + i + "," + j);		target.style.fill = "#ff0000"
 	}
 	displayCellAsTarget(i,j){
-		//var target = document.getElementById("" + i + "," + j);		target.style.fill = "#fff"
+		var target = document.getElementById("" + i + "," + j);		target.style.fill = "#fff"
 	}
 	displayCellAsComputed(i,j){
-		//var target = document.getElementById("" + i + "," + j);		target.style.stroke = "#ffff00"
+		var target = document.getElementById("" + i + "," + j);		target.style.stroke = "#ffff00"
 	}
 	displayCellAsVisited(i,j){
-		//var target = document.getElementById("" + i + "," + j);		target.style.fill = "#98ee98"
+		var target = document.getElementById("" + i + "," + j);		target.style.fill = "#98ee98"
 	}
 	displayCellAsOpen(i,j){
-		//var target = document.getElementById("" + i + "," + j);		target.style.stroke = "#ffff00"
+		var target = document.getElementById("" + i + "," + j);		target.style.stroke = "#ffff00"
 	}
 
 
@@ -473,18 +475,15 @@ class Maze {
 				} */
 				var neighbor = min.neighbors[i]
 				if (this.closedList.contains(neighbor)){
-					continue;
+					//continue;
 				}
 				if (!neighbor) {continue;}
 				if (neighbor.search < this.counter){
 					neighbor.g = Infinity;
 					neighbor.search = this.counter;
 				}
-				if (neighbor.g > (min.g + neighbor.c) && !this.closedList.contains(neighbor)){
+				if (neighbor.g > (min.g + neighbor.c) ){
 					neighbor.g = min.g + neighbor.c;
-					if (neighbor.g < 1){
-						console.log()
-					}
 					neighbor.pointer = min;
 					neighbor.f = neighbor.g + neighbor.h;
 					this.openList.delete(neighbor);
@@ -544,6 +543,7 @@ class Maze {
 	runAdaptive(){
 		//var originx = this.agent.x;
 		//var originy = this.agent.y;
+		this.numberOfCellsExpanded = 0;
 		var stack = [];
 		this.agent.f = this.agent.h;
 		while (this.start.x != this.target.x || this.start.y != this.target.y){
@@ -590,7 +590,7 @@ class Maze {
 					//console.log("Agent moved to (x: " + this.agent.x + ", y: " + this.agent.y + ") <br>");
 					this.displayCellAsVisited(this.agent.y, this.agent.x);
 					//console.log(this.agent.g)
-					//return;
+					return;
 				}
 			}
 
@@ -605,12 +605,12 @@ class Maze {
 		var ptr = this.target;
 		stack.length = 0;
 		//console.log("I reached the target!");
-		//console.log(this.numberOfCellsExpanded / this.counter)
 		var i = 0;
 		return (this.numberOfCellsExpanded / this.counter);
 	}
 
 	runBackward(){
+		this.numberOfCellsExpanded = 0;
 		//var originx = this.agent.x;
 		//var originy = this.agent.y;
 		var stack = [];
@@ -661,7 +661,7 @@ class Maze {
 					//console.log("Agent moved to (x: " + this.agent.x + ", y: " + this.agent.y + ") <br>");
 					this.displayCellAsVisited(this.agent.y, this.agent.x);
 					//console.log(this.agent.g)
-					//return;
+					return;
 				}
 			}
 			stack.length = 0;
@@ -670,13 +670,13 @@ class Maze {
 		var ptr = this.target;
 		stack.length = 0;
 		//console.log("I reached the target!");
-		//console.log(this.numberOfCellsExpanded / this.counter)
 		var i = 0;
 		return (this.numberOfCellsExpanded / this.counter);
 	}
 
 
 	runForward(){
+		this.numberOfCellsExpanded = 0;
 		//var originx = this.agent.x;
 		//var originy = this.agent.y;
 		var stack = [];
@@ -723,7 +723,7 @@ class Maze {
 					//console.log("Agent moved to (x: " + this.agent.x + ", y: " + this.agent.y + ") <br>");
 					this.displayCellAsVisited(this.agent.y, this.agent.x);
 					//console.log(this.agent.g)
-					//return;
+					return;
 				}
 			}
 			stack.length = 0;
@@ -732,7 +732,6 @@ class Maze {
 		var ptr = this.target;
 		stack.length = 0;
 		//console.log("I reached the target!");
-		//console.log(this.numberOfCellsExpanded / this.counter)
 		var i = 0;
 		return (this.numberOfCellsExpanded / this.counter);
 	}
@@ -765,7 +764,7 @@ function runForward() {
 				if (maze.agent.x != maze.target.x || maze.agent.y != maze.target.y){
 					runForward();
 				}		
-	}, 50)
+	}, 20)
 }
 function runBackward() {
 		setTimeout(function(){
@@ -773,7 +772,7 @@ function runBackward() {
 				if (maze.agent.x != maze.target.x || maze.agent.y != maze.target.y){
 					runBackward();
 				}	
-	}, 50)
+	}, 20)
 }
 function runAdaptive() {
 		setTimeout(function(){
@@ -782,7 +781,7 @@ function runAdaptive() {
 					runAdaptive();
 				}	
 			
-	}, 50)
+	}, 20)
 }
 	
 
@@ -794,8 +793,8 @@ window.onload = function(){
 	//var originy = maze.agent.y;
 	//var originx = maze.agent.x;
 
-	//document.querySelector("#fileInput").addEventListener('change',choseFile, false);
-	document.querySelector("#fileInput").addEventListener('change',runTest, false);
+	document.querySelector("#fileInput").addEventListener('change',choseFile, false);
+	//document.querySelector("#fileInput").addEventListener('change',runTest, false);
 	/*
 	
 	var i = 0;
