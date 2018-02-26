@@ -162,251 +162,136 @@ class PriorityQueue {
 
 
 class Maze {
-	reset(){
-		row.selectAll('.square').style('fill', '#666')
-		d3.selectAll(".square").style("stroke", "#000")
-		maze.load(file);
-	}
-	constructor(){
+	constructor(file){
 		this.openList = new PriorityQueue();
 		this.closedList = new PriorityQueue();
 		this.counter = 0;
 		this.numberOfCellsExpanded = 0;
-	}
-
-	generateMaze(){
-		/* Create nodes[101][101] */
-		var nodes = new Array(101);
-
-		/* Create visited[101][101] */
-		var visited = new Array(101);
-		for (var i = 0; i < 101; i++){
-			visited[i] = new Array (101);
-			visited[i].fill(false);
-		}
-		
-
-		/* Generate nodes */
-		for (i = 0; i < 101; i++){
-			/* Create second dimension of array */
-			nodes[i] = new Array(101);
-			for (var j = 0; j < 101; j++){
-				/* Make sure array space exists because full array not actually allocated */
-				if (!nodes[i]){
-					nodes[i] = []
-				}
-				nodes[i][j] = new Node(j,i);
-			}
-		}
-
-		/* Link nodes */
-		for (i = 0; i < 101; i++){
-			for (j = 0; j < 101; j++){
-				if (i + 1 < 101){
-					nodes[i][j].neighbors.push(nodes[i + 1][j]);
-				}
-				if (0 <= i - 1){
-					nodes[i][j].neighbors.push(nodes[i - 1][j]);
-				}
-				if (j + 1 < 101){
-					nodes[i][j].neighbors.push(nodes[i][j + 1]);
-				}
-				if (0 <= j - 1){
-					nodes[i][j].neighbors.push(nodes[i][j - 1]);
-				}
-			}
-		}
-
-		
-
-		/* Build walls in maze w/ iterative DFS */
-		var stack = [];
-		stack.push(nodes[0][0]);
-		while (stack.length > 0){
-			var node = stack.pop();
-			visited[node.y][node.x] = true;
-			var r = Math.floor(Math.random() * 100);
-			if (r < 20) { // 25% chance
-				node.isBlocked = true;
-			}
-			for (var i in node.neighbors){
-				var neighbor = node.neighbors[i];
-				if (!neighbor){ continue;}
-				if (!visited[neighbor.y][neighbor.x]){
-					stack.push(neighbor);
-				}
-			}
-		} 
-
-		/* Save data */
-		for (i=0;i<101;i++){
-			for (j=0;j<101;j++){
-				if (nodes[i][j].isBlocked){
-					this.data = this.data + "1";
-				} else {
-					this.data = this.data + "0";
-				}
-			}
-		}
-
-		
-		var y = Math.floor(Math.random() * 100);
-		var z = Math.floor(Math.random() * 100);
-		while (nodes[y][z].isBlocked){ y = Math.floor(Math.random() * 100); z = Math.floor(Math.random() * 100); }
-		
-		this.agent = nodes[y][z];
-		y = Math.floor(Math.random() * 100);
-		z = Math.floor(Math.random() * 100);
-		while (nodes[y][z].isBlocked){ y = Math.floor(Math.random() * 100); z = Math.floor(Math.random() * 100); }
-		this.target = nodes[y][z];
-		this.start = this.agent
-
-		/* Add agent and target info to data */
-		this.data = this.data + " " + this.target.x;
-		this.data = this.data + " " + this.target.y;
-		this.data = this.data + " " + this.agent.x;
-		this.data = this.data + " " + this.agent.y;
-
-		/* Set heuristic values */
-		for (i = 0; i < 101; i++){
-			for (j = 0; j < 101; j++){
-				nodes[i][j].h = Math.abs(nodes[i][j].x - this.target.x) + Math.abs(nodes[i][j].y - this.target.y);
-			}
-		}
-		
-	}
-
-	configure(r){
-		var data = r.split(" ");
-
-		/* Create nodes[101][101] */
-		var nodes = new Array(101);
-
-		/* Create visited[101][101] */
-		var visited = new Array(101);
-		for (var i = 0; i < 101; i++){
-			visited[i] = new Array (101);
-			visited[i].fill(false);
-		}
-		
-
-		/* Generate nodes */
-		var k = 0;
-		for (i = 0; i < 101; i++){
-			/* Create second dimension of array */
-			nodes[i] = new Array(101);
-			for (var j = 0; j < 101; j++){
-				/* Make sure array space exists because full array not actually allocated */
-				if (!nodes[i]){
-					nodes[i] = []
-				}
-				nodes[i][j] = new Node(j,i);
-				nodes[i][j].isBlocked = data[0][k] == '1' ? true : false;
-				k++;
-			}
-		}
-
-		/* Link nodes */
-		for (i = 0; i < 101; i++){
-			for (j = 0; j < 101; j++){
-				if (i + 1 < 101){
-					nodes[i][j].neighbors.push(nodes[i + 1][j]);
-				}
-				if (0 <= i - 1){
-					nodes[i][j].neighbors.push(nodes[i - 1][j]);
-				}
-				if (j + 1 < 101){
-					nodes[i][j].neighbors.push(nodes[i][j + 1]);
-				}
-				if (0 <= j - 1){
-					nodes[i][j].neighbors.push(nodes[i][j - 1]);
-				}
-			}
-		}
-
-		
-
-		/* Build walls in maze w/ iterative DFS 
-		var stack = [];
-		stack.push(nodes[0][0]);
-		while (stack.length > 0){
-			var node = stack.pop();
-			visited[node.y][node.x] = true;
-			var r = Math.floor(Math.random() * 100);
-			if (r < 30) { // 30% chance
-				node.isBlocked = true;
-			}
-			for (var i in node.neighbors){
-				var neighbor = node.neighbors[i];
-				if (!neighbor){ continue;}
-				if (!visited[neighbor.y][neighbor.x]){
-					stack.push(neighbor);
-				}
-			}
-		} */
-
-		/* Save data 
-		for (i=0;i<101;i++){
-			for (j=0;j<101;j++){
-				if (nodes[i][j].isBlocked){
-					this.data = this.data + "1";
-				} else {
-					this.data = this.data + "0";
-				}
-			}
-		}*/
-
-		/*
-		var y = Math.floor(Math.random() * 100);
-		var z = Math.floor(Math.random() * 100);
-		while (nodes[y][z].isBlocked){ y = Math.floor(Math.random() * 100); z = Math.floor(Math.random() * 100); }
-		*/
-		this.agent = nodes[data[4]][data[3]];
-		//y = Math.floor(Math.random() * 100);
-		//z = Math.floor(Math.random() * 100);
-		//while (nodes[y][z].isBlocked){ y = Math.floor(Math.random() * 100); z = Math.floor(Math.random() * 100); }
-		this.target = nodes[data[2]][data[1]];
-		this.start = this.agent
-
-		/* Add agent and target info to data 
-		this.data = this.data + " " + this.target.x;
-		this.data = this.data + " " + this.target.y;
-		this.data = this.data + " " + this.agent.x;
-		this.data = this.data + " " + this.agent.y;*/
-
-		/* Set heuristic values */
-		for (i = 0; i < 101; i++){
-			for (j = 0; j < 101; j++){
-				nodes[i][j].h = Math.abs(nodes[i][j].x - this.target.x) + Math.abs(nodes[i][j].y - this.target.y);
-			}
-		}
-		for (var i = 0; i < 101;i++){
-			for (var j = 0; j < 101; j++){
-				if (this.agent.x == j && this.agent.y == i){
-					this.displayCellAsAgent(i,j);
-					continue;
-				}
-				if (this.target.x == j && this.target.y == i){
-					this.displayCellAsTarget(i,j);
-					continue;
-				}
-				if (nodes[i][j].isBlocked){
-					this.displayCellAsBlocked(i,j);
-				}
-			}
-		}
-		this.nodes = nodes;
-	}
-
-	load(blob){
 		//this.data = "";
-		var maze = this;
+
+		var file = new File(file);
 		var reader = new FileReader();
 		reader.onload = function(e) {
-		    maze.configure(e.target.result);
+		    var result = e.target.result;
+		    var data = result.split(" ");
+
+			/* Create nodes[101][101] */
+			var nodes = new Array(101);
+
+			/* Create visited[101][101] */
+			var visited = new Array(101);
+			for (var i = 0; i < 101; i++){
+				visited[i] = new Array (101);
+				visited[i].fill(false);
+			}
+			
+
+			/* Generate nodes */
+			var k = 0;
+			for (i = 0; i < 101; i++){
+				/* Create second dimension of array */
+				nodes[i] = new Array(101);
+				for (var j = 0; j < 101; j++){
+					/* Make sure array space exists because full array not actually allocated */
+					if (!nodes[i]){
+						nodes[i] = []
+					}
+					nodes[i][j] = new Node(j,i);
+					nodes[i][j].isBlocked = data[0][k] == '1' ? true : false;
+					k++;
+				}
+			}
+
+			/* Link nodes */
+			for (i = 0; i < 101; i++){
+				for (j = 0; j < 101; j++){
+					if (i + 1 < 101){
+						nodes[i][j].neighbors.push(nodes[i + 1][j]);
+					}
+					if (0 <= i - 1){
+						nodes[i][j].neighbors.push(nodes[i - 1][j]);
+					}
+					if (j + 1 < 101){
+						nodes[i][j].neighbors.push(nodes[i][j + 1]);
+					}
+					if (0 <= j - 1){
+						nodes[i][j].neighbors.push(nodes[i][j - 1]);
+					}
+				}
+			}
+
+			
+
+			/* Build walls in maze w/ iterative DFS */
+			var stack = [];
+			stack.push(nodes[0][0]);
+			while (stack.length > 0){
+				var node = stack.pop();
+				visited[node.y][node.x] = true;
+				var r = Math.floor(Math.random() * 100);
+				if (r < 30) { /* 30% chance */
+					node.isBlocked = true;
+				}
+				for (var i in node.neighbors){
+					var neighbor = node.neighbors[i];
+					if (!neighbor){ continue;}
+					if (!visited[neighbor.y][neighbor.x]){
+						stack.push(neighbor);
+					}
+				}
+			}
+
+			/* Save data 
+			for (i=0;i<101;i++){
+				for (j=0;j<101;j++){
+					if (nodes[i][j].isBlocked){
+						this.data = this.data + "1";
+					} else {
+						this.data = this.data + "0";
+					}
+				}
+			}*/
+
+			var y = Math.floor(Math.random() * 100);
+			var z = Math.floor(Math.random() * 100);
+			while (nodes[y][z].isBlocked){ y = Math.floor(Math.random() * 100); z = Math.floor(Math.random() * 100); }
+			this.agent = nodes[y][z];
+			y = Math.floor(Math.random() * 100);
+			z = Math.floor(Math.random() * 100);
+			while (nodes[y][z].isBlocked){ y = Math.floor(Math.random() * 100); z = Math.floor(Math.random() * 100); }
+			this.target = nodes[y][z];
+			this.start = this.agent
+
+			/* Add agent and target info to data 
+			this.data = this.data + " " + this.target.x;
+			this.data = this.data + " " + this.target.y;
+			this.data = this.data + " " + this.agent.x;
+			this.data = this.data + " " + this.agent.y;*/
+
+			/* Set heuristic values */
+			for (i = 0; i < 101; i++){
+				for (j = 0; j < 101; j++){
+					nodes[i][j].h = Math.abs(nodes[i][j].x - this.target.x) + Math.abs(nodes[i][j].y - this.target.y);
+				}
+			}
+			for (var i = 0; i < 101;i++){
+				for (var j = 0; j < 101; j++){
+					if (this.agent.x == j && this.agent.y == i){
+						this.displayCellAsAgent(i,j);
+						continue;
+					}
+					if (this.target.x == j && this.target.y == i){
+						this.displayCellAsTarget(i,j);
+						continue;
+					}
+					if (nodes[i][j].isBlocked){
+						this.displayCellAsBlocked(i,j);
+					}
+				}
+			}
 		};
-		reader.readAsText(blob);
-		
+		reader.readAsText(file);
+
 	}
 
 	displayCellAsBlocked(i,j){
@@ -424,7 +309,7 @@ class Maze {
 	}
 	displayCellAsComputed(i,j){
 		var target = document.getElementById("" + i + "," + j);
-		target.style.stroke = "#ffff00"
+		target.style.stroke = "#98ee98"
 	}
 	displayCellAsVisited(i,j){
 		var target = document.getElementById("" + i + "," + j);
@@ -489,7 +374,7 @@ class Maze {
 					neighbor.f = neighbor.g + neighbor.h;
 					this.openList.delete(neighbor);
 					this.openList.insert(neighbor);
-					//this.displayCellAsOpen(neighbor.y, neighbor.x)
+					this.displayCellAsOpen(neighbor.y, neighbor.x)
 				}
 				
 			}
@@ -510,7 +395,7 @@ class Maze {
 		while (this.openList.size > 0){
 			min = this.openList.pop();
 			this.numberOfCellsExpanded++;
-			//this.displayCellAsOpen(min.y, min.x)
+			this.displayCellAsOpen(min.y, min.x)
 			this.closedList.insert(min);
 			if (this.start.g <= min.f){
 				return;
@@ -542,8 +427,8 @@ class Maze {
 	}
 
 	runAdaptive(){
-		//var originx = this.agent.x;
-		//var originy = this.agent.y;
+		var originx = this.agent.x;
+		var originy = this.agent.y;
 		var stack = [];
 		this.agent.f = this.agent.h;
 		while (this.start.x != this.target.x || this.start.y != this.target.y){
@@ -586,11 +471,11 @@ class Maze {
 					if (!this.agent){
 						console.log("agent was blank!");
 					}
-				
+
 					//console.log("Agent moved to (x: " + this.agent.x + ", y: " + this.agent.y + ") <br>");
 					this.displayCellAsVisited(this.agent.y, this.agent.x);
 					//console.log(this.agent.g)
-					return;
+					//return;
 				}
 			}
 
@@ -610,8 +495,8 @@ class Maze {
 	}
 
 	runBackward(){
-		//var originx = this.agent.x;
-		//var originy = this.agent.y;
+		var originx = this.agent.x;
+		var originy = this.agent.y;
 		var stack = [];
 		this.target.h = Math.abs(this.agent.x - this.target.x) + Math.abs(this.agent.y - this.target.y)
 		this.target.f = this.target.h;
@@ -656,11 +541,11 @@ class Maze {
 					if (!this.agent){
 						console.log("agent was blank!");
 					}
-					
+
 					//console.log("Agent moved to (x: " + this.agent.x + ", y: " + this.agent.y + ") <br>");
 					this.displayCellAsVisited(this.agent.y, this.agent.x);
 					//console.log(this.agent.g)
-					return;
+					//return;
 				}
 			}
 			stack.length = 0;
@@ -675,10 +560,9 @@ class Maze {
 
 
 	runForward(){
-		//var originx = this.agent.x;
-		//var originy = this.agent.y;
+		var originx = this.agent.x;
+		var originy = this.agent.y;
 		var stack = [];
-		console.log(this.agent);
 		this.agent.f = this.agent.h;
 		while (this.start.x != this.target.x || this.start.y != this.target.y){
 			while (stack.pop()){};
@@ -718,11 +602,11 @@ class Maze {
 					if (!this.agent){
 						console.log("agent was blank!");
 					}
-					
+
 					//console.log("Agent moved to (x: " + this.agent.x + ", y: " + this.agent.y + ") <br>");
 					this.displayCellAsVisited(this.agent.y, this.agent.x);
 					//console.log(this.agent.g)
-					return;
+					//return;
 				}
 			}
 			stack.length = 0;
@@ -732,73 +616,38 @@ class Maze {
 		stack.length = 0;
 		console.log("I reached the target!");
 		var i = 0;
-		return true;
+		return (this.numberOfCellsExpanded / this.counter);
 	}
 
 }
 
-var maze;
-var file;
-
-function choseFile(e){
-	row.selectAll('.square').style('fill', '#666')
-	file = e.target.files[0]; 
-	maze.load(file);
-}
-
-function runForward() {
-		setTimeout(function(){
-			maze.runForward();
-				if (maze.agent.x != maze.target.x || maze.agent.y != maze.target.y){
-					runForward();
-				}		
-	}, 50)
-}
-function runBackward() {
-		setTimeout(function(){
-			maze.runBackward();
-				if (maze.agent.x != maze.target.x || maze.agent.y != maze.target.y){
-					runBackward();
-				}	
-	}, 50)
-}
-function runAdaptive() {
-		setTimeout(function(){
-			maze.runAdaptive();
-				if (maze.agent.x != maze.target.x || maze.agent.y != maze.target.y){
-					runAdaptive();
-				}	
-			
-	}, 50)
-}
-	
 
 
 window.onload = function(){
-	maze = new Maze();
-	//maze.generateMaze();
+	var maze = new Maze();
 
-	//var originy = maze.agent.y;
-	//var originx = maze.agent.x;
-
-	document.querySelector("#fileInput").addEventListener('change',choseFile, false);
-
-
-	/*
+	var originy = maze.agent.y;
+	var originx = maze.agent.x;
 	var i = 0;
+	/*
 	while (i < 50){
-		if (maze.runForward()){
+		if (!!maze.runForward){
 			var blob = new Blob([maze.data], {type: "text/plain;charset=utf-8"});
 			saveAs(blob, "maze"+ (i + 1)+ ".txt");
 			i++;
+			maze = new Maze()
 			alert("maze created")
 		}
-		maze = new Maze();
-		maze.generateMaze();
 	}
 	*/
-
-	
+	/*
+	function main() {
+		setTimeout(function(){
+			maze.run();
+				main();	
+	}, 50)
+	}*/
+	//main();
 
 
 }

@@ -55,7 +55,7 @@ var column = row.selectAll(".square")
 	.attr("id", function(d) { return ("" + d.row + "," + d.column); })
 	.attr("width", function(d) { return d.width; })
 	.attr("height", function(d) { return d.height; })
-	.style("fill", "#fff")
+	.style("fill", "#666")
 	.style("stroke", "#222")
 	.on('click', function(d) {
        d.click ++;
