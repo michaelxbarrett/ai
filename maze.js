@@ -718,7 +718,6 @@ class Maze {
 					if (!this.agent){
 						console.log("agent was blank!");
 					}
-					
 					//console.log("Agent moved to (x: " + this.agent.x + ", y: " + this.agent.y + ") <br>");
 					this.displayCellAsVisited(this.agent.y, this.agent.x);
 					//console.log(this.agent.g)
